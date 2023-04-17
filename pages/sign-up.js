@@ -12,16 +12,30 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from "axios";
 const theme = createTheme();
 
 function signUp() {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const userDetails = {
       email: data.get("email"),
       password: data.get("password"),
-    });
+      firstName: data.get("firstName"),
+      lastName: data.get("lastName"),
+      age: data.get("age"),
+    };
+    const { data: user } = await axios.post(
+      "http://localhost:3000/auth/signup",
+      userDetails
+    );
+    if (!user.doesUserAlreadyExist) {
+      alert("Sign Up Successful");
+    } else {
+      alert("User Already Exists Or Error Occured");
+    }
+    console.log(user);
   };
   return (
     <ThemeProvider theme={theme}>
@@ -88,6 +102,16 @@ function signUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="age"
+                  label="Age"
+                  id="age"
+                  autoComplete="age"
                 />
               </Grid>
               <Grid item xs={12}>
